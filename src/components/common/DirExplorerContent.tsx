@@ -11,23 +11,6 @@ interface DirExplorerContentProps {}
 
 const items: FileNodeModel[] = [
   {
-    name: 'file 1',
-    type: 'file',
-    size: 0,
-    children: [
-      {
-        name: 'File 1',
-        type: 'file',
-        size: 1024,
-      },
-      {
-        name: 'File 2',
-        type: 'file',
-        size: 2048,
-      },
-    ],
-  },
-  {
     name: 'Folder 1',
     type: 'folder',
     size: 0,
@@ -45,8 +28,25 @@ const items: FileNodeModel[] = [
     ],
   },
   {
-    size: 0,
     name: 'Folder 2',
+    type: 'folder',
+    size: 0,
+    children: [
+      {
+        name: 'File 1',
+        type: 'file',
+        size: 1024,
+      },
+      {
+        name: 'File 2',
+        type: 'file',
+        size: 2048,
+      },
+    ],
+  },
+  {
+    size: 0,
+    name: 'Folder 3',
     type: 'folder',
     children: [
       {
@@ -66,13 +66,15 @@ const items: FileNodeModel[] = [
 const DirExplorerContent: React.FC<DirExplorerContentProps> = () => {
   return (
     <Box w="100%" h="100%">
-      {items.map((item: FileNodeModel) =>
-        item.type === 'folder' ? (
-          <FolderView item={item} />
-        ) : (
-          <FileView item={item} />
-        ),
-      )}
+      {items.map((item: FileNodeModel, index: number) => (
+        <Box>
+          {item.type === 'folder' ? (
+            <FolderView item={item} key={index} />
+          ) : (
+            <FileView item={item} key={index} />
+          )}
+        </Box>
+      ))}
     </Box>
   );
 };

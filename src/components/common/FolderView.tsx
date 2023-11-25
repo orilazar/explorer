@@ -14,9 +14,7 @@ const FolderView: React.FC<FolderViewProps> = ({ item }) => {
 
   return (
     <Box w="100%" h="100%">
-      {item.children?.map((child, index) => (
-        <ItemView item={child} key={index} icon={<FaFolder />} />
-      ))}
+      <ItemView item={item} icon={<FaFolder />} />
     </Box>
   );
 };
