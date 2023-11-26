@@ -10,7 +10,7 @@ interface DirExplorerContentProps {}
 const DirExplorerContent: React.FC<DirExplorerContentProps> = () => {
   const { items } = useExplorer();
   return (
-    <Box w="100%" h="100%">
+    <Box w="100%" maxH="90vh" overflowY="auto">
       {items?.map((item: FileNodeModel, index: number) => (
         <Box>
           {item.type === 'folder' ? (

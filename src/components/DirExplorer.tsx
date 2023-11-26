@@ -8,7 +8,10 @@ interface DirExplorerProps {}
 
 const DirExplorer: React.FC<DirExplorerProps> = () => {
   return (
-    <Box position="fixed" right={0} bottom={0} width="20em" height="20em">
+    <Box
+      w="100%"
+      // position="fixed" right={0} bottom={0} width="20em" height="20em"
+    >
       <ColorModeSwitcher />
       <DirExplorerBar />
       <DirExplorerContent />

@@ -1,5 +1,7 @@
 import React, { PropsWithChildren, createContext, useState } from 'react';
 import { FileNodeModel } from '../models/FileNodeModel';
+//@ts-ignore
+const fs = window.require('fs');
 
 export enum FileReadError {
   AccessDenied = 'Access Denied',
@@ -44,9 +46,7 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
   const updateSearchValue = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setSearchValue(newValue);
-    console.log('new value', newValue);
     if (isValidPath(newValue)) {
-      console.log('running');
       const files = await getFilesFromLocalPath(newValue);
       if (files instanceof Array) {
         updateItems(files);
@@ -57,20 +57,20 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
   const getFilesFromLocalPath = async (
     path: string,
   ): Promise<FileNodeModel[] | FileReadError> => {
-    console.log('PATH', path);
     if (!isValidPath(path)) {
       return FileReadError.InvalidPath;
     }
     try {
-      const files = await window.fs.promises.readdir(path);
+      const files = await fs.promises.readdir(path, { withFileTypes: true });
       console.log(files);
       return files?.map((file: any) => {
-        const fileStats = window.fs.statSync(`${path}/${file}`);
+        const fileStats = fs.statSync(`${path}/${file.name}`);
+        console.log(file);
         const fileNode: FileNodeModel = {
-          name: file,
+          name: file.name,
           fullPath: `${path}/${file}`,
           size: fileStats.size,
-          type: 'file',
+          type: fileStats.isDirectory() ? 'folder' : 'file',
         };
         return fileNode;
       });
@@ -82,7 +82,7 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
 
   const isValidPath = (path: string): boolean => {
     try {
-      window.fs.accessSync(path);
+      fs.accessSync(path, fs.constants.R_OK);
       return true;
     } catch (error) {
       return false;

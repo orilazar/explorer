@@ -10,7 +10,7 @@ interface ItemViewProps {
 
 const ItemView: React.FC<ItemViewProps> = ({ item, icon }) => {
   return (
-    <Button w="90%" ml="5%" _hover={{ background: 'rgba(255, 255, 255, 0.1)' }}>
+    <Button w="90%" _hover={{ background: 'rgba(255, 255, 255, 0.1)' }}>
       <HStack display={'flex'} w="100%">
         <Icon>{icon}</Icon>
 

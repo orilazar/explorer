@@ -97,6 +97,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
+    "@electron/remote": "^2.1.0",
     "chakra-ui-contextmenu": "^1.0.5",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
@@ -229,7 +230,8 @@
       "output": "release/build"
     },
     "extraResources": [
-      "./assets/**"
+      "./assets/**",
+      "./node_modules/@electron/remote/**"
     ],
     "publish": {
       "provider": "github",

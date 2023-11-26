@@ -9,8 +9,8 @@ interface FolderViewProps {
 }
 
 const FolderView: React.FC<FolderViewProps> = ({ item }) => {
-  if (item.children === undefined || item.children.length === 0)
-    return <Text>Empty Folder</Text>;
+  // if (item.children === undefined || item.children.length === 0)
+  //   return <Text>Empty Folder</Text>;
 
   return (
     <Box w="100%" h="100%">
