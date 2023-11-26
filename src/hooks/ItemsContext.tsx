@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, createContext, useState } from 'react';
 import { FileNodeModel } from '../models/FileNodeModel';
-//@ts-ignore
 const fs = window.require('fs');
+import { useStackState } from 'rooks';
 
 export enum FileReadError {
   AccessDenied = 'Access Denied',
@@ -15,6 +15,9 @@ export const ItemsContext = createContext<ItemsContextType>({
   updateItems: () => {},
   searchValue: '',
   updateSearchValue: () => {},
+  searchItems: () => {},
+  goBack: () => {},
+  goUp: () => {},
   getFilesFromLocalPath: (path: string) =>
     new Promise<FileReadError>(() => FileReadError.Unknown),
 });
@@ -26,6 +29,9 @@ interface ItemsContextType {
   updateItems: (newItems: FileNodeModel[]) => void;
   searchValue: string;
   updateSearchValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  searchItems: () => void;
+  goBack: () => void;
+  goUp: () => void;
   getFilesFromLocalPath: (
     path: string,
   ) => Promise<FileNodeModel[] | FileReadError>;
@@ -36,18 +42,45 @@ interface ItemsProviderProps extends PropsWithChildren<{}> {}
 // Create a provider component to wrap the components that need access to the items
 export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
   const [items, setItems] = useState<FileNodeModel[]>([]);
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState('');
+  const [
+    backHistory,
+    { push: backHistoryPush, pop: backHistoryPop, length: backHistoryLength },
+  ] = useStackState<string>([]);
 
   // Function to update the list of items
   const updateItems = (newItems: FileNodeModel[]) => {
+    backHistoryPush(searchValue);
     setItems(newItems);
   };
 
   const updateSearchValue = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setSearchValue(newValue);
-    if (isValidPath(newValue)) {
-      const files = await getFilesFromLocalPath(newValue);
+    setSearchValue(e.target.value);
+  };
+
+  const goBack = () => {
+    const newSearchValue = backHistoryPop();
+    if (newSearchValue) {
+      setSearchValue(newSearchValue);
+      searchItems(newSearchValue);
+    }
+  };
+
+  const goUp = () => {
+    const newSearchValue = searchValue.substring(
+      0,
+      searchValue.lastIndexOf('/'),
+    );
+    if (newSearchValue) {
+      setSearchValue(newSearchValue);
+      searchItems(newSearchValue);
+    }
+  };
+
+  const searchItems = async (newSearchValue?: string) => {
+    const path = newSearchValue || searchValue;
+    if (isValidPath(path)) {
+      const files = await getFilesFromLocalPath(path);
       if (files instanceof Array) {
         updateItems(files);
       }
@@ -97,6 +130,9 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
         getFilesFromLocalPath,
         searchValue,
         updateSearchValue,
+        searchItems,
+        goBack,
+        goUp,
       }}
     >
       {children}
