@@ -43,10 +43,8 @@ interface ItemsProviderProps extends PropsWithChildren<{}> {}
 export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
   const [items, setItems] = useState<FileNodeModel[]>([]);
   const [searchValue, setSearchValue] = useState('');
-  const [
-    backHistory,
-    { push: backHistoryPush, pop: backHistoryPop, length: backHistoryLength },
-  ] = useStackState<string>([]);
+  const [backHistory, { push: backHistoryPush, pop: backHistoryPop }] =
+    useStackState<string>([]);
 
   // Function to update the list of items
   const updateItems = (newItems: FileNodeModel[]) => {
@@ -59,6 +57,7 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
   };
 
   const goBack = () => {
+    console.log('BACK');
     const newSearchValue = backHistoryPop();
     if (newSearchValue) {
       setSearchValue(newSearchValue);
@@ -95,10 +94,8 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
     }
     try {
       const files = await fs.promises.readdir(path, { withFileTypes: true });
-      console.log(files);
       return files?.map((file: any) => {
         const fileStats = fs.statSync(`${path}/${file.name}`);
-        console.log(file);
         const fileNode: FileNodeModel = {
           name: file.name,
           fullPath: `${path}/${file}`,
