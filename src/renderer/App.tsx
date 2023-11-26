@@ -19,7 +19,17 @@ export default function App() {
     variants: { darkTooltip },
   });
   const theme = extendTheme({
-    components: { tooltip: tooltipTheme },
+    components: {
+      Tooltip: {
+        baseStyle: {
+          bg: 'black',
+          color: 'white',
+          arrow: 'black',
+          borderRadius: '0.8em',
+          padding: '0.5em',
+        },
+      },
+    },
   });
 
   return (

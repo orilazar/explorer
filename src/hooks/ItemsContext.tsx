@@ -27,6 +27,7 @@ export const ItemsContext = createContext<ItemsContextType>({
   goUp: () => {},
   getFilesFromLocalPath: (path: string) =>
     new Promise<FileReadError>(() => FileReadError.Unknown),
+  lastRefreshedTime: Date.now(),
 });
 
 // Create a context that contains a list of items of type FileNodeModel
@@ -43,6 +44,7 @@ interface ItemsContextType {
   getFilesFromLocalPath: (
     path: string,
   ) => Promise<FileNodeModel[] | FileReadError>;
+  lastRefreshedTime: number;
 }
 
 interface ItemsProviderProps extends PropsWithChildren<{}> {}
@@ -51,6 +53,7 @@ interface ItemsProviderProps extends PropsWithChildren<{}> {}
 export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
   const [items, setItems] = useState<FileNodeModel[]>([]);
   const [searchValue, setSearchValue] = useState('');
+  const [lastRefreshedTime, setLastRefreshedTime] = useState(Date.now());
 
   const [backHistory, { push: backHistoryPush, pop: backHistoryPop }] =
     useStackState<string>([]);
@@ -66,7 +69,6 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
   };
 
   const goBack = () => {
-    console.log('BACK');
     const newSearchValue = backHistoryPop();
     if (newSearchValue) {
       setSearchValue(newSearchValue);
@@ -88,6 +90,7 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
   const searchItems = async (newSearchValue?: string) => {
     const path = newSearchValue || searchValue;
     if (isValidPath(path)) {
+      setLastRefreshedTime(Date.now());
       const files = await getFilesFromLocalPath(path);
       if (files instanceof Array) {
         updateItems(files);
@@ -144,6 +147,7 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
         searchItems,
         goBack,
         goUp,
+        lastRefreshedTime,
       }}
     >
       {children}

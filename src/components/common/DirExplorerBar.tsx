@@ -19,15 +19,19 @@ import {
 } from 'react-icons/io5';
 import { IoRefreshOutline } from 'react-icons/io5';
 import { useExplorer } from '../../hooks/ItemsContext';
-import { FaSearch } from 'react-icons/fa';
 import useKeyboardShortcut from 'use-keyboard-shortcut';
 
 interface DirExplorerBarProps {}
 
 const DirExplorerBar: React.FC<DirExplorerBarProps> = () => {
-  const { searchValue, updateSearchValue, searchItems, goBack, goUp } =
-    useExplorer();
-  const [lastRefreshedTime, setLastRefreshedTime] = useState(Date.now());
+  const {
+    searchValue,
+    updateSearchValue,
+    searchItems,
+    goBack,
+    goUp,
+    lastRefreshedTime,
+  } = useExplorer();
 
   const { flushHeldKeys: backKeys } = useKeyboardShortcut(
     ['Control', 'Alt', 'ArrowLeft'],
@@ -48,10 +52,9 @@ const DirExplorerBar: React.FC<DirExplorerBarProps> = () => {
     },
   );
 
-  const search = useCallback(() => {
-    setLastRefreshedTime(Date.now());
+  const search = () => {
     searchItems();
-  }, [searchItems]);
+  };
 
   const customFormatter = (value: number, unit: string, suffix: string) => {
     if (unit === 'second' && value < 10) {
@@ -90,11 +93,19 @@ const DirExplorerBar: React.FC<DirExplorerBarProps> = () => {
       />
       <Tooltip
         openDelay={500}
-        hasArrow
         label={
-          <Text p="0.5em">
-            <Kbd p="0.5em">ctrl</Kbd>+<Kbd p="0.5em">alt</Kbd> +
-            <Kbd p="0.5em">arrow left</Kbd>
+          <Text alignItems="center" display="flex">
+            <Kbd background="whiteAlpha.300" p="0.5em">
+              ctrl
+            </Kbd>
+            +
+            <Kbd background="whiteAlpha.300" p="0.5em">
+              alt
+            </Kbd>
+            +
+            <Kbd background="whiteAlpha.300" fontSize="xl">
+              &larr;
+            </Kbd>
           </Text>
         }
       >
@@ -107,11 +118,19 @@ const DirExplorerBar: React.FC<DirExplorerBarProps> = () => {
       </Tooltip>
       <Tooltip
         openDelay={500}
-        hasArrow
         label={
-          <Text p="0.5em">
-            <Kbd p="0.5em">ctrl</Kbd>+<Kbd p="0.5em">alt</Kbd> +
-            <Kbd p="0.5em">arrow up</Kbd>
+          <Text alignItems="center" display="flex">
+            <Kbd background="whiteAlpha.300" p="0.5em">
+              ctrl
+            </Kbd>
+            +
+            <Kbd background="whiteAlpha.300" p="0.5em">
+              alt
+            </Kbd>
+            +
+            <Kbd background="whiteAlpha.300" fontSize="xl">
+              &uarr;
+            </Kbd>
           </Text>
         }
       >

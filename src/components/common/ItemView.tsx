@@ -17,9 +17,20 @@ interface ItemViewProps {
   item: FileNodeModel;
   icon: JSX.Element;
   onPress?: () => void;
+  handleKeyDown: (
+    e: React.KeyboardEvent<HTMLTableRowElement> | undefined,
+  ) => void;
+  isSelected: boolean;
+  onSelectRow: () => void;
 }
 
-const ItemView: React.FC<ItemViewProps> = ({ item, icon }) => {
+const ItemView: React.FC<ItemViewProps> = ({
+  item,
+  icon,
+  handleKeyDown,
+  isSelected,
+  onSelectRow,
+}) => {
   const { searchItems, setSearchValue } = useExplorer();
 
   const onItemClick = () => {
@@ -52,9 +63,14 @@ const ItemView: React.FC<ItemViewProps> = ({ item, icon }) => {
     >
       {(ref: any) => (
         <Tr
+          onKeyDown={handleKeyDown}
+          tabIndex={0}
+          _focusVisible={{ outline: 'none' }}
           ref={ref}
           _hover={{ background: 'gray.700' }}
           onDoubleClick={onItemClick}
+          onClick={onSelectRow}
+          background={isSelected ? 'gray.600' : 'transparent'}
         >
           <Td>
             <HStack>
