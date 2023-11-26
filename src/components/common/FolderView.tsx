@@ -13,9 +13,7 @@ const FolderView: React.FC<FolderViewProps> = ({ item }) => {
   //   return <Text>Empty Folder</Text>;
 
   return (
-    <Box w="100%" h="100%">
-      <ItemView item={item} icon={<FaFolder color="yellow.300" />} />
-    </Box>
+    <ItemView item={item} icon={<FaFolder color="yellow" fontSize="1.5em" />} />
   );
 };
 

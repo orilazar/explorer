@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Icon, Text } from '@chakra-ui/react';
+import { HStack, Icon, Td, Text, Tr } from '@chakra-ui/react';
 import React from 'react';
 import { FileNodeModel } from '../../models/FileNodeModel';
 
@@ -10,14 +10,17 @@ interface ItemViewProps {
 
 const ItemView: React.FC<ItemViewProps> = ({ item, icon }) => {
   return (
-    <Button w="90%" _hover={{ background: 'rgba(255, 255, 255, 0.1)' }}>
-      <HStack display={'flex'} w="100%">
-        <Icon>{icon}</Icon>
+    <Tr>
+      <Td>
+        <HStack>
+          <Icon>{icon}</Icon>
+          <Text>{item.name}</Text>
+        </HStack>
+      </Td>
 
-        <Text>{item.name}</Text>
-        <Text>{item.size}</Text>
-      </HStack>
-    </Button>
+      <Td>{item.size}</Td>
+      <Td>{item.fullPath}</Td>
+    </Tr>
   );
 };
 

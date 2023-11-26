@@ -1,4 +1,12 @@
-import { Box } from '@chakra-ui/react';
+import {
+  Box,
+  Table,
+  TableContainer,
+  Tbody,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import React from 'react';
 import { FileNodeModel } from '../../models/FileNodeModel';
 import FolderView from './FolderView';
@@ -10,17 +18,26 @@ interface DirExplorerContentProps {}
 const DirExplorerContent: React.FC<DirExplorerContentProps> = () => {
   const { items } = useExplorer();
   return (
-    <Box w="100%" maxH="90vh" overflowY="auto">
-      {items?.map((item: FileNodeModel, index: number) => (
-        <Box>
-          {item.type === 'folder' ? (
-            <FolderView item={item} key={index} />
-          ) : (
-            <FileView item={item} key={index} />
+    <TableContainer w="100%" maxH="90vh" overflowY="auto">
+      <Table variant="simple">
+        <Thead>
+          <Tr>
+            <Th>Name</Th>
+            <Th>Size</Th>
+            <Th>Full path</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {items?.map((item: FileNodeModel, index: number) =>
+            item.type === 'folder' ? (
+              <FolderView item={item} key={index} />
+            ) : (
+              <FileView item={item} key={index} />
+            ),
           )}
-        </Box>
-      ))}
-    </Box>
+        </Tbody>
+      </Table>
+    </TableContainer>
   );
 };
 

@@ -9,11 +9,7 @@ interface FileViewProps {
 }
 
 const FileView: React.FC<FileViewProps> = ({ item }) => {
-  return (
-    <Box w="100%" h="100%">
-      <ItemView item={item} icon={<FaFile />} />
-    </Box>
-  );
+  return <ItemView item={item} icon={<FaFile fontSize="1.5em" />} />;
 };
 
 export default FileView;

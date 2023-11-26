@@ -98,7 +98,7 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
         const fileStats = fs.statSync(`${path}/${file.name}`);
         const fileNode: FileNodeModel = {
           name: file.name,
-          fullPath: `${path}/${file}`,
+          fullPath: `${path}/${file.name}`,
           size: fileStats.size,
           type: fileStats.isDirectory() ? 'folder' : 'file',
         };
