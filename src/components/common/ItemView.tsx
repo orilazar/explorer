@@ -1,6 +1,7 @@
 import { HStack, Icon, Td, Text, Tr } from '@chakra-ui/react';
 import React from 'react';
 import { FileNodeModel } from '../../models/FileNodeModel';
+import { useExplorer } from '../../hooks/ItemsContext';
 
 interface ItemViewProps {
   item: FileNodeModel;
@@ -9,8 +10,16 @@ interface ItemViewProps {
 }
 
 const ItemView: React.FC<ItemViewProps> = ({ item, icon }) => {
+  const { searchItems, setSearchValue } = useExplorer();
+  const onItemClick = () => {
+    if (item.type === 'folder') {
+      setSearchValue(item.fullPath);
+      searchItems(item.fullPath);
+    }
+  };
+
   return (
-    <Tr>
+    <Tr _hover={{ background: 'gray.700' }} onDoubleClick={onItemClick}>
       <Td>
         <HStack>
           <Icon>{icon}</Icon>

@@ -9,7 +9,8 @@ import {
   InputGroup,
   InputRightAddon,
 } from '@chakra-ui/react';
-import React from 'react';
+import TimeAgo from 'react-timeago';
+import React, { useCallback, useState } from 'react';
 import { RiHome2Line } from 'react-icons/ri';
 import {
   IoChevronBackSharp,
@@ -26,7 +27,9 @@ interface DirExplorerBarProps {}
 const DirExplorerBar: React.FC<DirExplorerBarProps> = () => {
   const { searchValue, updateSearchValue, searchItems, goBack, goUp } =
     useExplorer();
-  const { flushHeldKeys } = useKeyboardShortcut(
+  const [lastRefreshedTime, setLastRefreshedTime] = useState(Date.now());
+
+  const { flushHeldKeys: backKeys } = useKeyboardShortcut(
     ['Control', 'Alt', 'ArrowLeft'],
     (shortcutKeys) => goBack(),
     {
@@ -35,9 +38,47 @@ const DirExplorerBar: React.FC<DirExplorerBarProps> = () => {
       repeatOnHold: false,
     },
   );
+  const { flushHeldKeys: upKeys } = useKeyboardShortcut(
+    ['Control', 'Alt', 'ArrowUp'],
+    (shortcutKeys) => goUp(),
+    {
+      overrideSystem: false,
+      ignoreInputFields: false,
+      repeatOnHold: false,
+    },
+  );
 
-  const search = () => {
+  const search = useCallback(() => {
+    setLastRefreshedTime(Date.now());
     searchItems();
+  }, [searchItems]);
+
+  const customFormatter = (value: number, unit: string, suffix: string) => {
+    if (unit === 'second' && value < 10) {
+      return 'just now';
+    }
+    if (unit === 'second') {
+      return `${value} sec`;
+    }
+    if (unit === 'minute') {
+      return `${value} min`;
+    }
+    if (unit === 'hour') {
+      return `${value} hr`;
+    }
+    if (unit === 'day') {
+      return `${value} days`;
+    }
+    if (unit === 'week') {
+      return `${value} week`;
+    }
+    if (unit === 'month') {
+      return `${value} month`;
+    }
+    if (unit === 'year') {
+      return `${value} month`;
+    }
+    // return `${value} ${unit}${value > 1 ? 's' : ''} ago`;
   };
 
   return (
@@ -97,7 +138,11 @@ const DirExplorerBar: React.FC<DirExplorerBarProps> = () => {
           border={'0.1em solid rgba(255, 255, 255, 0.1)'}
         />
         <InputRightAddon fontSize="0.8em" fontWeight="bold" color="lightgray">
-          1 min ago
+          <TimeAgo
+            date={lastRefreshedTime}
+            minPeriod={1}
+            formatter={customFormatter}
+          />
         </InputRightAddon>
       </InputGroup>
       <IconButton
@@ -107,7 +152,12 @@ const DirExplorerBar: React.FC<DirExplorerBarProps> = () => {
         onClick={search}
         colorScheme="linkedin"
       />
-      <IconButton aria-label="Refresh" icon={<IoRefreshOutline />} ml="0.4em" />
+      <IconButton
+        aria-label="Refresh"
+        icon={<IoRefreshOutline />}
+        ml="0.4em"
+        onClick={search}
+      />
     </Box>
   );
 };

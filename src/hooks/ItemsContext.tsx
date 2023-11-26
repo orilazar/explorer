@@ -1,4 +1,10 @@
-import React, { PropsWithChildren, createContext, useState } from 'react';
+import React, {
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  createContext,
+  useState,
+} from 'react';
 import { FileNodeModel } from '../models/FileNodeModel';
 const fs = window.require('fs');
 import { useStackState } from 'rooks';
@@ -15,7 +21,8 @@ export const ItemsContext = createContext<ItemsContextType>({
   updateItems: () => {},
   searchValue: '',
   updateSearchValue: () => {},
-  searchItems: () => {},
+  setSearchValue: () => {},
+  searchItems: (newSearchValue?: string) => {},
   goBack: () => {},
   goUp: () => {},
   getFilesFromLocalPath: (path: string) =>
@@ -29,7 +36,8 @@ interface ItemsContextType {
   updateItems: (newItems: FileNodeModel[]) => void;
   searchValue: string;
   updateSearchValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  searchItems: () => void;
+  setSearchValue: Dispatch<SetStateAction<string>>;
+  searchItems: (newSearchValue?: string) => void;
   goBack: () => void;
   goUp: () => void;
   getFilesFromLocalPath: (
@@ -43,6 +51,7 @@ interface ItemsProviderProps extends PropsWithChildren<{}> {}
 export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
   const [items, setItems] = useState<FileNodeModel[]>([]);
   const [searchValue, setSearchValue] = useState('');
+
   const [backHistory, { push: backHistoryPush, pop: backHistoryPop }] =
     useStackState<string>([]);
 
@@ -52,7 +61,7 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
     setItems(newItems);
   };
 
-  const updateSearchValue = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
 
@@ -96,6 +105,10 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
       const files = await fs.promises.readdir(path, { withFileTypes: true });
       return files?.map((file: any) => {
         const fileStats = fs.statSync(`${path}/${file.name}`);
+        const size =
+          fileStats.size > 1024
+            ? `${fileStats.size / 1024}KB`
+            : `${fileStats.size}B`;
         const fileNode: FileNodeModel = {
           name: file.name,
           fullPath: `${path}/${file.name}`,
@@ -127,6 +140,7 @@ export const ItemsProvider: React.FC<ItemsProviderProps> = ({ children }) => {
         getFilesFromLocalPath,
         searchValue,
         updateSearchValue,
+        setSearchValue,
         searchItems,
         goBack,
         goUp,
